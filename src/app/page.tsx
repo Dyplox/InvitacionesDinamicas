@@ -1,120 +1,114 @@
 'use client';
 
-import { useAuth } from '@/components/AuthProvider';
-import { supabase } from '@/lib/supabase';
 import { templates } from '@/data/templates';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
 import { useI18n } from '@/i18n/I18nProvider';
-import { LanguageSwitcher } from '@/components/LanguageSwitcher';
+import { TopAppBar } from '@/components/TopAppBar';
+import { Sidebar } from '@/components/Sidebar';
 
 export default function Home() {
-  const { user } = useAuth();
   const router = useRouter();
   const { t } = useI18n();
   const [filter, setFilter] = useState<'all' | 'boda' | 'babyshower'>('all');
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    router.push('/login');
-  };
 
   const filteredTemplates = filter === 'all'
     ? templates
     : templates.filter(t => t.category === filter);
 
   return (
-    <div className="min-h-screen bg-surface-container-low text-on-surface pb-16">
-      <header className="bg-surface-container-lowest shadow-sm border-b border-outline-variant/20 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
-        <h1 className="text-2xl font-serif font-bold text-primary">EventaCanvas</h1>
-        <div className="flex items-center gap-6">
-          <LanguageSwitcher />
-          <div className="flex items-center gap-4 border-l border-outline-variant/30 pl-6">
-            <span className="text-sm font-label text-on-surface-variant hidden sm:inline-block">{user?.email}</span>
-            <button
-              onClick={handleLogout}
-              className="btn-tertiary text-sm"
-            >
-              {t('header.logout')}
-            </button>
-          </div>
-        </div>
-      </header>
+    <>
+      <TopAppBar />
+      <div className="flex min-h-[calc(100vh-73px)]">
+        <Sidebar />
+        <main className="flex-1 bg-background pt-12 px-8 pb-32">
+          {/* Header Area */}
+          <header className="max-w-6xl mx-auto mb-16 text-center">
+            <span className="font-label uppercase tracking-[0.2em] text-[10px] text-primary font-bold mb-4 block">Premium Selection</span>
+            <h1 className="font-headline text-5xl md:text-6xl text-on-surface leading-tight mb-6">{t('dashboard.title')}</h1>
+            <p className="font-body text-lg text-on-surface-variant max-w-2xl mx-auto">{t('dashboard.subtitle')}</p>
+          </header>
 
-      <main className="max-w-7xl mx-auto px-6 mt-12">
-        <div className="mb-10 flex flex-col md:flex-row md:justify-between md:items-end gap-6">
-          <div>
-            <h2 className="text-4xl font-serif font-bold mb-3">{t('dashboard.title')}</h2>
-            <p className="text-on-surface-variant text-lg">{t('dashboard.subtitle')}</p>
-          </div>
-
-          <div className="flex flex-wrap gap-2 p-1 bg-surface-container rounded-lg inline-flex">
+          {/* Gallery Filter */}
+          <div className="max-w-6xl mx-auto flex flex-wrap justify-center gap-4 mb-12">
             <button
               onClick={() => setFilter('all')}
-              className={`px-5 py-2 rounded-md text-sm font-medium transition-all ${filter === 'all' ? 'bg-surface-container-lowest text-primary shadow-sm' : 'text-on-surface hover:bg-surface-container-high'}`}
+              className={`px-6 py-2 rounded-full font-label text-sm transition-colors ${filter === 'all' ? 'bg-primary text-white' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-dim'}`}
             >
               {t('dashboard.filter.all')}
             </button>
             <button
               onClick={() => setFilter('boda')}
-              className={`px-5 py-2 rounded-md text-sm font-medium transition-all ${filter === 'boda' ? 'bg-surface-container-lowest text-primary shadow-sm' : 'text-on-surface hover:bg-surface-container-high'}`}
+              className={`px-6 py-2 rounded-full font-label text-sm transition-colors ${filter === 'boda' ? 'bg-primary text-white' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-dim'}`}
             >
               {t('dashboard.filter.weddings')}
             </button>
             <button
               onClick={() => setFilter('babyshower')}
-              className={`px-5 py-2 rounded-md text-sm font-medium transition-all ${filter === 'babyshower' ? 'bg-surface-container-lowest text-primary shadow-sm' : 'text-on-surface hover:bg-surface-container-high'}`}
+              className={`px-6 py-2 rounded-full font-label text-sm transition-colors ${filter === 'babyshower' ? 'bg-primary text-white' : 'bg-surface-container-high text-on-surface-variant hover:bg-surface-dim'}`}
             >
               {t('dashboard.filter.babyshowers')}
             </button>
           </div>
-        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-          {/* Create new blank canvas */}
-          <div
-            onClick={() => router.push('/editor/new')}
-            className="card-container aspect-[2/3] flex flex-col items-center justify-center cursor-pointer group bg-surface hover:bg-surface-container-low border-dashed"
-          >
-            <div className="w-14 h-14 bg-surface-container rounded-full flex items-center justify-center mb-4 group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-              </svg>
-            </div>
-            <span className="font-serif font-medium text-on-surface-variant group-hover:text-primary transition-colors">{t('dashboard.blank')}</span>
-          </div>
+          {/* Bento Art Gallery Grid */}
+          <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8">
 
-          {/* Templates */}
-          {filteredTemplates.map((template) => (
-            <div
-              key={template.id}
-              onClick={() => router.push(`/editor/${template.id}`)}
-              className="card-container group cursor-pointer flex flex-col"
-            >
-              <div className="relative overflow-hidden aspect-[2/3] bg-surface-container border-b border-outline-variant/10">
-                <Image
-                  src={template.thumbnailUrl}
-                  alt={template.name}
-                  fill
-                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                  className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  priority={false}
-                />
-                <div className="absolute inset-0 bg-surface-container-lowest/0 group-hover:bg-surface-container-lowest/20 transition-all flex items-center justify-center backdrop-blur-[0px] group-hover:backdrop-blur-[2px]">
-                  <span className="opacity-0 group-hover:opacity-100 btn-secondary shadow-md transform translate-y-4 group-hover:translate-y-0 transition-all duration-300">
-                    {t('dashboard.useTemplate')}
-                  </span>
+            {/* Template Rendering */}
+            {filteredTemplates.map((template, index) => {
+              // Alternate grid sizes for bento box effect
+              const colSpanClass = index % 3 === 0 ? "md:col-span-8" : "md:col-span-4";
+
+              return (
+                <div
+                  key={template.id}
+                  onClick={() => router.push(`/editor/${template.id}`)}
+                  className={`${colSpanClass} group relative overflow-hidden rounded-xl bg-surface-container-lowest transition-all hover:scale-[1.01] cursor-pointer`}
+                >
+                  <div className={`${index % 3 === 0 ? 'aspect-[16/10]' : 'aspect-square md:aspect-auto md:h-full min-h-[300px]'} overflow-hidden relative`}>
+                    <Image
+                      src={template.thumbnailUrl}
+                      alt={template.name}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      priority={false}
+                    />
+                  </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-8 text-white">
+                     <div className="mb-2 flex items-center gap-2">
+                        <span className="bg-tertiary-fixed text-on-tertiary-fixed text-[10px] font-label font-bold px-3 py-1 rounded-full uppercase tracking-widest">{template.category}</span>
+                    </div>
+                    <h2 className="font-headline text-3xl mb-2">{template.name}</h2>
+                    <div className="flex gap-4 opacity-0 group-hover:opacity-100 transition-opacity mt-4">
+                      <button className="bg-primary px-6 py-2 rounded-full font-label text-xs font-bold hover:bg-primary-container transition-all active:scale-95 text-white">
+                        {t('dashboard.useTemplate')}
+                      </button>
+                    </div>
+                  </div>
                 </div>
+              );
+            })}
+
+            {/* Small Square Card (Create New) */}
+            <div onClick={() => router.push('/editor/new')} className="md:col-span-3 group bg-surface-dim rounded-xl p-6 flex flex-col justify-between transition-all hover:bg-surface-container-high cursor-pointer min-h-[250px]">
+              <div>
+                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm">
+                  <span className="material-symbols-outlined text-primary">add</span>
+                </div>
+                <h3 className="font-headline text-lg text-on-surface mb-2">{t('dashboard.blank')}</h3>
+                <p className="font-body text-xs text-on-surface-variant">Empieza desde cero y crea tu propio diseño.</p>
               </div>
-              <div className="p-4 bg-surface-container-lowest">
-                <h3 className="font-serif font-medium text-on-surface text-lg truncate">{template.name}</h3>
-                <p className="text-sm font-label text-tertiary capitalize mt-1">{template.category === 'boda' ? t('dashboard.filter.weddings') : t('dashboard.filter.babyshowers')}</p>
-              </div>
+              <span className="font-label text-[10px] font-bold text-primary flex items-center gap-1 mt-4">
+                  CREAR AHORA
+                  <span className="material-symbols-outlined text-xs">arrow_forward</span>
+              </span>
             </div>
-          ))}
-        </div>
-      </main>
-    </div>
+
+          </div>
+        </main>
+      </div>
+    </>
   );
 }
