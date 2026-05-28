@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { fabric } from 'fabric';
 import { templates } from '@/data/templates';
 import { useRouter } from 'next/navigation';
-import { MapPin, Calendar, MessageCircle, Gift, Type, Download, ChevronLeft } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { useI18n } from '@/i18n/I18nProvider';
 
@@ -206,149 +205,146 @@ export default function CanvasEditor({ templateId }: CanvasEditorProps) {
   };
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Header */}
-      <header className="bg-surface-container-lowest shadow-sm ghost-border px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={() => router.push('/')}
-            className="p-2 hover:bg-gray-100 rounded-full transition text-gray-600"
-          >
-            <ChevronLeft size={20} />
-          </button>
-          <h1 className="font-semibold text-gray-800">{t('editor.title')}</h1>
+    <>
+      <header className="w-full top-0 sticky z-50 bg-surface-container-lowest transition-all duration-300 border-b border-outline-variant/15" id="main-header">
+        <div className="flex justify-between items-center px-8 py-4 w-full">
+          <div className="flex items-center gap-8">
+            <button onClick={() => router.push('/')} className="p-2 text-on-surface-variant hover:text-primary transition-colors flex items-center justify-center -ml-2">
+              <span className="material-symbols-outlined">arrow_back</span>
+            </button>
+            <span className="font-headline font-bold text-xl text-primary">{t('editor.title')}</span>
+          </div>
+          <div className="flex items-center gap-4">
+             <button onClick={exportPDF} className="bg-gradient-to-r from-primary to-primary-container text-white px-6 py-2 rounded-full font-label text-sm font-semibold hover:opacity-90 active:scale-95 transition-all flex items-center gap-2">
+                <span className="material-symbols-outlined text-[18px]">download</span>
+                {t('editor.export')}
+             </button>
+          </div>
         </div>
-        <button
-          onClick={exportPDF}
-          className="flex items-center gap-2 btn-primary px-4 py-2 rounded-md transition"
-        >
-          <Download size={18} />
-          {t('editor.export')}
-        </button>
       </header>
 
-      <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar Toolbar */}
-        <div className="w-72 bg-surface-container-lowest ghost-border shadow-[4px_0_24px_rgba(0,0,0,0.02)] z-10 flex flex-col p-4 gap-6 overflow-y-auto">
+      <div className="flex min-h-[calc(100vh-73px)] overflow-hidden">
 
-          {/* Add Elements */}
-          <div>
-            <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">{t('editor.add')}</h3>
-            <button
-              onClick={addText}
-              className="w-full flex items-center gap-3 p-3 hover:bg-gray-50 border rounded-lg text-gray-700 transition mb-2"
-            >
-              <Type size={18} className="text-gray-500" />
-              <span>{t('editor.text')}</span>
+        {/* Sidebar Left */}
+        <aside className="hidden md:flex h-full w-64 flex-col py-6 px-4 space-y-2 bg-surface-container-lowest border-r border-outline-variant/15 overflow-y-auto">
+          <div className="px-2 mb-6">
+            <h3 className="font-label text-[10px] text-on-surface-variant uppercase tracking-wider font-bold mb-4 ml-2">{t('editor.add')}</h3>
+
+            <button onClick={addText} className="w-full mb-4 flex items-center justify-center gap-2 bg-surface-container-high hover:bg-surface-dim text-primary font-label text-xs font-bold py-3 rounded-xl transition-all">
+              <span className="material-symbols-outlined text-sm">text_fields</span>
+              {t('editor.text')}
             </button>
 
-            <p className="text-xs text-gray-500 mt-4 mb-2">{t('editor.interactiveButtons')}</p>
+            <h3 className="font-label text-[10px] text-on-surface-variant uppercase tracking-wider font-bold mb-3 ml-2 mt-6">{t('editor.interactiveButtons')}</h3>
             <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={() => addInteractiveButton('location')}
-                className="flex flex-col items-center justify-center p-3 hover:bg-blue-50 border rounded-lg text-gray-700 transition gap-1"
-              >
-                <MapPin size={20} className="text-blue-500" />
-                <span className="text-xs">{t('editor.location')}</span>
+              <button onClick={() => addInteractiveButton('location')} className="flex flex-col items-center justify-center p-3 hover:bg-surface-container-high rounded-xl text-on-surface-variant transition gap-2 border border-outline-variant/10">
+                <span className="material-symbols-outlined text-blue-500">location_on</span>
+                <span className="text-[10px] font-label font-bold uppercase tracking-wider">{t('editor.location')}</span>
               </button>
-              <button
-                onClick={() => addInteractiveButton('calendar')}
-                className="flex flex-col items-center justify-center p-3 hover:bg-blue-50 border rounded-lg text-gray-700 transition gap-1"
-              >
-                <Calendar size={20} className="text-blue-500" />
-                <span className="text-xs">{t('editor.calendar')}</span>
+              <button onClick={() => addInteractiveButton('calendar')} className="flex flex-col items-center justify-center p-3 hover:bg-surface-container-high rounded-xl text-on-surface-variant transition gap-2 border border-outline-variant/10">
+                <span className="material-symbols-outlined text-primary">calendar_month</span>
+                <span className="text-[10px] font-label font-bold uppercase tracking-wider">{t('editor.calendar')}</span>
               </button>
-              <button
-                onClick={() => addInteractiveButton('whatsapp')}
-                className="flex flex-col items-center justify-center p-3 hover:bg-green-50 border rounded-lg text-gray-700 transition gap-1"
-              >
-                <MessageCircle size={20} className="text-green-500" />
-                <span className="text-xs">{t('editor.whatsapp')}</span>
+              <button onClick={() => addInteractiveButton('whatsapp')} className="flex flex-col items-center justify-center p-3 hover:bg-surface-container-high rounded-xl text-on-surface-variant transition gap-2 border border-outline-variant/10">
+                <span className="material-symbols-outlined text-green-500">chat</span>
+                <span className="text-[10px] font-label font-bold uppercase tracking-wider">{t('editor.whatsapp')}</span>
               </button>
-              <button
-                onClick={() => addInteractiveButton('gift')}
-                className="flex flex-col items-center justify-center p-3 hover:bg-purple-50 border rounded-lg text-gray-700 transition gap-1"
-              >
-                <Gift size={20} className="text-purple-500" />
-                <span className="text-xs">{t('editor.gift')}</span>
+              <button onClick={() => addInteractiveButton('gift')} className="flex flex-col items-center justify-center p-3 hover:bg-surface-container-high rounded-xl text-on-surface-variant transition gap-2 border border-outline-variant/10">
+                <span className="material-symbols-outlined text-purple-500">featured_seasonal_and_gifts</span>
+                <span className="text-[10px] font-label font-bold uppercase tracking-wider">{t('editor.gift')}</span>
               </button>
             </div>
           </div>
-
-          {/* Properties Panel (Contextual) */}
-          {activeObject && (
-            <div className="pt-4 border-t border-gray-100">
-              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">{t('editor.properties')}</h3>
-
-              {/* Text Properties */}
-              {(activeObject.type === 'i-text' || activeObject.type === 'textbox') && (
-                <div className="space-y-3 mb-4">
-                  <div>
-                    <label className="text-xs text-gray-500 block mb-1">{t('editor.textColor')}</label>
-                    <div className="flex gap-2">
-                      <input
-                        type="color"
-                        value={textColor}
-                        onChange={(e) => handleUpdateText('fill', e.target.value)}
-                        className="w-8 h-8 rounded cursor-pointer"
-                      />
-                      <input
-                        type="text"
-                        value={textColor}
-                        onChange={(e) => handleUpdateText('fill', e.target.value)}
-                        className="flex-1 text-sm border rounded px-2"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-xs text-gray-500 block mb-1">{t('editor.size')} ({fontSize}px)</label>
-                    <input
-                      type="range"
-                      min="12" max="120"
-                      value={fontSize}
-                      onChange={(e) => handleUpdateText('fontSize', parseInt(e.target.value))}
-                      className="w-full"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Link Property (For any object, especially buttons) */}
-              <div className="space-y-3 mb-4">
-                <div>
-                  <label className="text-xs text-blue-600 font-medium block mb-1">
-                    {t('editor.link')}
-                  </label>
-                  <input
-                    type="url"
-                    placeholder="https://maps.google.com/..."
-                    value={linkUrl}
-                    onChange={(e) => handleUpdateLink(e.target.value)}
-                    className="w-full text-sm border rounded p-2 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
-                  />
-                  <p className="text-[10px] text-gray-500 mt-1">{t('editor.linkHelp')}</p>
-                </div>
-              </div>
-
-              {/* Delete */}
-              <button
-                onClick={deleteSelected}
-                className="w-full py-2 text-sm text-red-600 border border-red-200 hover:bg-red-50 rounded-md transition mt-4"
-              >
-                {t('editor.delete')}
-              </button>
-            </div>
-          )}
-        </div>
+        </aside>
 
         {/* Canvas Area */}
-        <div className="flex-1 bg-surface-dim p-8 overflow-auto flex items-start justify-center">
-          <div className="shadow-2xl bg-white relative" style={{ width: A4_WIDTH, height: A4_HEIGHT }}>
+        <main className="flex-1 bg-surface p-8 overflow-auto flex items-start justify-center relative">
+          <div className="shadow-modal bg-white relative rounded-sm" style={{ width: A4_WIDTH, height: A4_HEIGHT, minWidth: A4_WIDTH, minHeight: A4_HEIGHT }}>
             <canvas ref={canvasRef} />
           </div>
-        </div>
+        </main>
 
+        {/* Sidebar Right (Properties) */}
+        <aside className="w-72 bg-surface-container-lowest border-l border-outline-variant/15 flex flex-col p-6 overflow-y-auto hidden lg:flex h-full">
+            {activeObject ? (
+               <div className="space-y-8">
+                  <header className="border-b border-outline-variant/20 pb-4">
+                     <span className="font-label uppercase tracking-[0.2em] text-[10px] text-primary font-bold mb-1 block">Propiedades</span>
+                     <h2 className="font-headline text-lg text-on-surface">{t('editor.properties')}</h2>
+                  </header>
+
+                  {/* Text Properties */}
+                  {(activeObject.type === 'i-text' || activeObject.type === 'textbox') && (
+                     <div className="space-y-6">
+                        <div>
+                           <label className="font-label text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2 block">{t('editor.textColor')}</label>
+                           <div className="flex gap-2 items-center">
+                              <input
+                                 type="color"
+                                 value={textColor}
+                                 onChange={(e) => handleUpdateText('fill', e.target.value)}
+                                 className="w-10 h-10 rounded-full cursor-pointer overflow-hidden border-0 p-0"
+                              />
+                              <input
+                                 type="text"
+                                 value={textColor}
+                                 onChange={(e) => handleUpdateText('fill', e.target.value)}
+                                 className="flex-1 text-sm bg-surface-container-low border border-outline-variant/30 rounded-lg px-3 py-2 font-mono text-on-surface"
+                              />
+                           </div>
+                        </div>
+                        <div>
+                           <label className="font-label text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-4 flex justify-between">
+                              <span>{t('editor.size')}</span>
+                              <span className="text-primary">{fontSize}px</span>
+                           </label>
+                           <input
+                              type="range"
+                              min="12" max="120"
+                              value={fontSize}
+                              onChange={(e) => handleUpdateText('fontSize', parseInt(e.target.value))}
+                              className="w-full h-1 bg-outline-variant/30 rounded-lg appearance-none cursor-pointer accent-primary"
+                           />
+                        </div>
+                     </div>
+                  )}
+
+                  {/* Link Property */}
+                  <div className="space-y-4 pt-6 border-t border-outline-variant/10">
+                     <div>
+                        <label className="font-label text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2 block">
+                           {t('editor.link')}
+                        </label>
+                        <input
+                           type="url"
+                           placeholder="https://..."
+                           value={linkUrl}
+                           onChange={(e) => handleUpdateLink(e.target.value)}
+                           className="w-full text-sm bg-surface-container-low border border-outline-variant/30 rounded-lg p-3 text-on-surface focus:outline-none focus:border-primary transition-colors"
+                        />
+                        <p className="text-[10px] text-on-surface-variant mt-2">{t('editor.linkHelp')}</p>
+                     </div>
+                  </div>
+
+                  {/* Alignment & Actions */}
+                  <div className="space-y-4 pt-6 border-t border-outline-variant/10">
+                     <button
+                        onClick={deleteSelected}
+                        className="w-full py-3 flex items-center justify-center gap-2 text-sm font-bold text-error border border-error/30 hover:bg-error/5 rounded-xl transition-colors"
+                     >
+                        <span className="material-symbols-outlined text-[18px]">delete</span>
+                        {t('editor.delete')}
+                     </button>
+                  </div>
+               </div>
+            ) : (
+               <div className="h-full flex flex-col items-center justify-center text-center text-on-surface-variant/50 space-y-4">
+                  <span className="material-symbols-outlined text-4xl">touch_app</span>
+                  <p className="font-body text-sm max-w-[200px]">Selecciona un elemento en el lienzo para editar sus propiedades.</p>
+               </div>
+            )}
+        </aside>
       </div>
-    </div>
+    </>
   );
 }
