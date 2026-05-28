@@ -5,3 +5,5 @@ allowBuilds:
   unrs-resolver: set this to true or false
 minimumReleaseAgeExclude:
   - lucide-react@1.17.0
+packages:
+  - '.'
