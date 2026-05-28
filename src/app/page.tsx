@@ -6,10 +6,13 @@ import { templates } from '@/data/templates';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Image from 'next/image';
+import { useI18n } from '@/i18n/I18nProvider';
+import { LanguageSwitcher } from '@/components/LanguageSwitcher';
 
 export default function Home() {
   const { user } = useAuth();
   const router = useRouter();
+  const { t } = useI18n();
   const [filter, setFilter] = useState<'all' | 'boda' | 'babyshower'>('all');
 
   const handleLogout = async () => {
@@ -26,12 +29,13 @@ export default function Home() {
       <header className="bg-white shadow-sm p-4 flex justify-between items-center">
         <h1 className="text-xl font-bold text-blue-600">EventaCanvas</h1>
         <div className="flex items-center gap-4">
+          <LanguageSwitcher />
           <span className="text-sm text-gray-600">{user?.email}</span>
           <button
             onClick={handleLogout}
             className="text-sm px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded-md transition"
           >
-            Salir
+            {t('header.logout')}
           </button>
         </div>
       </header>
@@ -39,8 +43,8 @@ export default function Home() {
       <main className="max-w-6xl mx-auto p-8">
         <div className="mb-8 flex justify-between items-end">
           <div>
-            <h2 className="text-3xl font-bold mb-2">Plantillas</h2>
-            <p className="text-gray-500">Selecciona una plantilla para comenzar a diseñar.</p>
+            <h2 className="text-3xl font-bold mb-2">{t('dashboard.title')}</h2>
+            <p className="text-gray-500">{t('dashboard.subtitle')}</p>
           </div>
 
           <div className="flex gap-2">
@@ -48,19 +52,19 @@ export default function Home() {
               onClick={() => setFilter('all')}
               className={`px-4 py-2 rounded-full text-sm ${filter === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
             >
-              Todos
+              {t('dashboard.filter.all')}
             </button>
             <button
               onClick={() => setFilter('boda')}
               className={`px-4 py-2 rounded-full text-sm ${filter === 'boda' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
             >
-              Bodas
+              {t('dashboard.filter.weddings')}
             </button>
             <button
               onClick={() => setFilter('babyshower')}
               className={`px-4 py-2 rounded-full text-sm ${filter === 'babyshower' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
             >
-              Baby Showers
+              {t('dashboard.filter.babyshowers')}
             </button>
           </div>
         </div>
@@ -76,7 +80,7 @@ export default function Home() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>
             </div>
-            <span className="font-medium text-gray-600 group-hover:text-blue-600">Lienzo en blanco</span>
+            <span className="font-medium text-gray-600 group-hover:text-blue-600">{t('dashboard.blank')}</span>
           </div>
 
           {/* Templates */}
@@ -97,12 +101,12 @@ export default function Home() {
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition flex items-center justify-center">
                   <span className="opacity-0 group-hover:opacity-100 bg-white text-gray-800 font-medium px-4 py-2 rounded-md shadow-sm transform scale-95 group-hover:scale-100 transition duration-200">
-                    Usar plantilla
+                    {t('dashboard.useTemplate')}
                   </span>
                 </div>
               </div>
               <h3 className="font-medium text-gray-800">{template.name}</h3>
-              <p className="text-xs text-gray-500 capitalize">{template.category}</p>
+              <p className="text-xs text-gray-500 capitalize">{template.category === 'boda' ? t('dashboard.filter.weddings') : t('dashboard.filter.babyshowers')}</p>
             </div>
           ))}
         </div>
