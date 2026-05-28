@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { templates } from '@/data/templates';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import Image from 'next/image';
 
 export default function Home() {
   const { user } = useAuth();
@@ -86,11 +87,13 @@ export default function Home() {
               className="group cursor-pointer"
             >
               <div className="relative border border-gray-200 rounded-lg overflow-hidden aspect-[2/3] mb-2 group-hover:shadow-lg transition">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={template.thumbnailUrl}
                   alt={template.name}
-                  className="w-full h-full object-cover"
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                  className="object-cover"
+                  priority={false}
                 />
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition flex items-center justify-center">
                   <span className="opacity-0 group-hover:opacity-100 bg-white text-gray-800 font-medium px-4 py-2 rounded-md shadow-sm transform scale-95 group-hover:scale-100 transition duration-200">
