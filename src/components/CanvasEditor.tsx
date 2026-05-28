@@ -208,7 +208,7 @@ export default function CanvasEditor({ templateId }: CanvasEditorProps) {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <header className="bg-white border-b px-4 py-3 flex items-center justify-between">
+      <header className="bg-surface-container-lowest shadow-sm ghost-border px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button
             onClick={() => router.push('/')}
@@ -220,7 +220,7 @@ export default function CanvasEditor({ templateId }: CanvasEditorProps) {
         </div>
         <button
           onClick={exportPDF}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition"
+          className="flex items-center gap-2 btn-primary px-4 py-2 rounded-md transition"
         >
           <Download size={18} />
           {t('editor.export')}
@@ -229,7 +229,7 @@ export default function CanvasEditor({ templateId }: CanvasEditorProps) {
 
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar Toolbar */}
-        <div className="w-64 bg-white border-r flex flex-col p-4 gap-6 overflow-y-auto">
+        <div className="w-72 bg-surface-container-lowest ghost-border shadow-[4px_0_24px_rgba(0,0,0,0.02)] z-10 flex flex-col p-4 gap-6 overflow-y-auto">
 
           {/* Add Elements */}
           <div>
@@ -342,7 +342,7 @@ export default function CanvasEditor({ templateId }: CanvasEditorProps) {
         </div>
 
         {/* Canvas Area */}
-        <div className="flex-1 bg-gray-200 p-8 overflow-auto flex items-start justify-center">
+        <div className="flex-1 bg-surface-dim p-8 overflow-auto flex items-start justify-center">
           <div className="shadow-2xl bg-white relative" style={{ width: A4_WIDTH, height: A4_HEIGHT }}>
             <canvas ref={canvasRef} />
           </div>
