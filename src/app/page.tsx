@@ -2,7 +2,7 @@
 
 import { templates } from '@/data/templates';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useI18n } from '@/i18n/I18nProvider';
 import { TopAppBar } from '@/components/TopAppBar';
@@ -12,6 +12,15 @@ export default function Home() {
   const router = useRouter();
   const { t } = useI18n();
   const [filter, setFilter] = useState<'all' | 'boda' | 'babyshower'>('all');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Artificial loading state
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const filteredTemplates = filter === 'all'
     ? templates
@@ -54,58 +63,70 @@ export default function Home() {
 
           {/* Bento Art Gallery Grid */}
           <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-8">
-
-            {/* Template Rendering */}
-            {filteredTemplates.map((template, index) => {
-              // Alternate grid sizes for bento box effect
-              const colSpanClass = index % 3 === 0 ? "md:col-span-8" : "md:col-span-4";
-
-              return (
-                <div
-                  key={template.id}
-                  onClick={() => router.push(`/editor/${template.id}`)}
-                  className={`${colSpanClass} group relative overflow-hidden rounded-xl bg-surface-container-lowest transition-all hover:scale-[1.01] cursor-pointer`}
-                >
-                  <div className={`${index % 3 === 0 ? 'aspect-[16/10]' : 'aspect-square md:aspect-auto md:h-full min-h-[300px]'} overflow-hidden relative`}>
-                    <Image
-                      src={template.thumbnailUrl}
-                      alt={template.name}
-                      fill
-                      sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
-                      className="object-cover transition-transform duration-700 group-hover:scale-110"
-                      priority={false}
-                    />
-                  </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-8 text-white">
-                     <div className="mb-2 flex items-center gap-2">
-                        <span className="bg-tertiary-fixed text-on-tertiary-fixed text-[10px] font-label font-bold px-3 py-1 rounded-full uppercase tracking-widest">{template.category}</span>
+            {isLoading ? (
+              // Skeleton Loading Grid
+              <>
+                {[0, 1, 2, 3].map((index) => {
+                  const colSpanClass = index % 3 === 0 ? "md:col-span-8" : "md:col-span-4";
+                  return (
+                    <div key={index} className={`${colSpanClass} rounded-xl bg-surface-container-high animate-pulse`}>
+                      <div className={`${index % 3 === 0 ? 'aspect-[16/10]' : 'aspect-square md:aspect-auto md:h-full min-h-[300px]'}`}></div>
                     </div>
-                    <h2 className="font-headline text-3xl mb-2">{template.name}</h2>
-                    <div className="flex gap-4 opacity-0 group-hover:opacity-100 transition-opacity mt-4">
-                      <button className="bg-primary px-6 py-2 rounded-full font-label text-xs font-bold hover:bg-primary-container transition-all active:scale-95 text-white">
-                        {t('dashboard.useTemplate')}
-                      </button>
+                  );
+                })}
+              </>
+            ) : (
+              // Actual Template Rendering
+              <>
+                {filteredTemplates.map((template, index) => {
+                  const colSpanClass = index % 3 === 0 ? "md:col-span-8" : "md:col-span-4";
+                  return (
+                    <div
+                      key={template.id}
+                      onClick={() => router.push(`/editor/${template.id}`)}
+                      className={`${colSpanClass} group relative overflow-hidden rounded-xl bg-surface-container-lowest transition-all hover:scale-[1.01] cursor-pointer`}
+                    >
+                      <div className={`${index % 3 === 0 ? 'aspect-[16/10]' : 'aspect-square md:aspect-auto md:h-full min-h-[300px]'} overflow-hidden relative`}>
+                        <Image
+                          src={template.thumbnailUrl}
+                          alt={template.name}
+                          fill
+                          sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                          className="object-cover transition-transform duration-700 group-hover:scale-110"
+                          priority={false}
+                        />
+                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-8 text-white">
+                         <div className="mb-2 flex items-center gap-2">
+                            <span className="bg-tertiary-fixed text-on-tertiary-fixed text-[10px] font-label font-bold px-3 py-1 rounded-full uppercase tracking-widest">{template.category}</span>
+                        </div>
+                        <h2 className="font-headline text-3xl mb-2">{template.name}</h2>
+                        <div className="flex gap-4 opacity-0 group-hover:opacity-100 transition-opacity mt-4">
+                          <button className="bg-primary px-6 py-2 rounded-full font-label text-xs font-bold hover:bg-primary-container transition-all active:scale-95 text-white">
+                            {t('dashboard.useTemplate')}
+                          </button>
+                        </div>
+                      </div>
                     </div>
+                  );
+                })}
+
+                {/* Small Square Card (Create New) */}
+                <div onClick={() => router.push('/editor/new')} className="md:col-span-3 group bg-surface-dim rounded-xl p-6 flex flex-col justify-between transition-all hover:bg-surface-container-high cursor-pointer min-h-[250px]">
+                  <div>
+                    <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm">
+                      <span className="material-symbols-outlined text-primary">add</span>
+                    </div>
+                    <h3 className="font-headline text-lg text-on-surface mb-2">{t('dashboard.blank')}</h3>
+                    <p className="font-body text-xs text-on-surface-variant">Empieza desde cero y crea tu propio diseño.</p>
                   </div>
+                  <span className="font-label text-[10px] font-bold text-primary flex items-center gap-1 mt-4">
+                      CREAR AHORA
+                      <span className="material-symbols-outlined text-xs">arrow_forward</span>
+                  </span>
                 </div>
-              );
-            })}
-
-            {/* Small Square Card (Create New) */}
-            <div onClick={() => router.push('/editor/new')} className="md:col-span-3 group bg-surface-dim rounded-xl p-6 flex flex-col justify-between transition-all hover:bg-surface-container-high cursor-pointer min-h-[250px]">
-              <div>
-                <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-6 shadow-sm">
-                  <span className="material-symbols-outlined text-primary">add</span>
-                </div>
-                <h3 className="font-headline text-lg text-on-surface mb-2">{t('dashboard.blank')}</h3>
-                <p className="font-body text-xs text-on-surface-variant">Empieza desde cero y crea tu propio diseño.</p>
-              </div>
-              <span className="font-label text-[10px] font-bold text-primary flex items-center gap-1 mt-4">
-                  CREAR AHORA
-                  <span className="material-symbols-outlined text-xs">arrow_forward</span>
-              </span>
-            </div>
-
+              </>
+            )}
           </div>
         </main>
       </div>
