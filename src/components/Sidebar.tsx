@@ -4,7 +4,7 @@ import Link from 'next/link';
 
 export function Sidebar() {
   return (
-    <aside className="hidden md:flex h-[calc(100vh-80px)] w-64 left-0 sticky flex-col py-6 px-4 space-y-2 bg-surface-container-low border-r border-outline-variant/15 overflow-y-auto">
+    <aside className="hidden md:flex h-[calc(100vh-73px)] w-64 left-0 sticky top-[73px] flex-col py-6 px-4 space-y-2 bg-surface-container-low border-r border-outline-variant/15 overflow-y-auto">
       <div className="px-4 mb-8">
         <div className="flex items-center gap-3 mb-2 group/edit cursor-pointer hover:bg-surface-container-high p-1 rounded-lg transition-colors">
           <div className="w-10 h-10 rounded-lg bg-surface-dim overflow-hidden flex items-center justify-center shrink-0">
